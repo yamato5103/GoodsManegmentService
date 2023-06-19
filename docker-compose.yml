@@ -1,0 +1,30 @@
+version: '3'
+services:
+  app:
+    build:
+      context: back_end
+      dockerfile: dockerfile
+
+    container_name: goods_app_back
+    ports:
+      - 8080:8080
+    tty: true
+    volumes:
+      - ./server:/srv:cached
+    working_dir: /srv
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    container_name: goods_db
+    ports:
+      - "5432:5432"
+    volumes:
+      #データの永続化
+      - ./postgres/data:/var/lib/postgresql/data
+      #初期のSQL文実行
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
